@@ -134,6 +134,9 @@ class MainWindow(QMainWindow):
         toolbar.setMovable(False)
         self.addToolBar(toolbar)
 
+        statusbar = QStatusBar()
+        self.setStatusBar(statusbar)
+
         btn_ac_adduser = QAction(QIcon("icon/adicionar.svg"), "Adicionar Cartão", self)
         btn_ac_adduser.triggered.connect(self.insert)
         btn_ac_adduser.setStatusTip("Adicionar")
