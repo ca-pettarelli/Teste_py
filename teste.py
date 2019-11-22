@@ -113,6 +113,11 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__(*args, **kwargs)
         self.setWindowIcon(QIcon('icon/pagamento-com-cartao-de-credito.png'))
 
+        self.conn = sqlite3.connect("database.db") #criando o banco de dados
+        self.c = self.conn.cursor() #iniciando conexão
+        self.c.execute("CREATE TABLE IF NOT EXISTS cart(roll INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, branch TEXT, date DATE)")
+        self.c.close() #fechando conexão
+
         file_menu = self.menuBar().addMenu("&File")
         self.setWindowTitle("Cadastro de Cartões")
         self.setMinimumSize(800,600)
@@ -156,6 +161,18 @@ class MainWindow(QMainWindow):
         btn_ac_delete.setStatusTip("Deletar")
         toolbar.addAction(btn_ac_delete)
 
+    def loaddata(self):
+        self.connection = sqlite3.connect("database.db")
+        query = "SELECT * FROM cart"
+        result = self.connection.execute(query)
+        self.tableWidget.setRowCount(0)
+        for row_number,row_data in enumerate(result):
+            self.tableWidget.insertRow(row_number)
+            for column_number,data in enumerate(row_data):
+                self.tableWidget.setItem(row_number,column_number, QTableWidgetItem(str(data)))
+            #self.connection.close()
+        
+
     def insert(self):
         dlg = InsertDialog()
         dlg.exec_()
@@ -173,4 +190,5 @@ app = QApplication(sys.argv)
 if(QDialog.Accepted == True):
     window = MainWindow()
     window.show()
+    window.loaddata()
 sys.exit(app.exec_())
